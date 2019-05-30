@@ -51,7 +51,8 @@ BOOL wininet_request(struct Cobol *c, BOOL Method, PCHAR *Data, PDWORD Length)
 	else {
 		ReturnValue = HttpSendRequestA(hNetworkRequest, NULL, 0, *Data, *Length);
 	};
-    }
+	InternetCloseHandle(hNetworkRequest);
+    };
     return ReturnValue;
 }
 

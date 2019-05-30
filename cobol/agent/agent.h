@@ -1,29 +1,35 @@
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#endif
+
+#include "packet.h"
+#include <stdbool.h>
 
 // Probably gonna end up doing executable patching. Maybe XOR'ing it as well,
 // but we'll discuss that when we get there.
 struct Configuration
 {
-    CHAR UserAgent;		//! User-Agent
-    CHAR Host;			//! Host in unsigned long format or uint32_t (was DWORD). Hrm.
-    WORD Port;			//! Port in unsigned short or uint16_t (was USHORT);. Hrm
-    CHAR Path;			//! Path to send POST/GET requests
+    char     UserAgent;			//! User-Agent
+    char     Host;			//! Host in unsigned long format or uint32_t (was DWORD). Hrm.
+    uint16_t Port;			//! Port in unsigned short or uint16_t (was USHORT);. Hrm
+    char     Path;			//! Path to send POST/GET requests
 };
 
 struct Cobol
 {
     struct Configuration *Config;
     struct CobolHttp {
-	HANDLE hInternetConfig;     			//! InternetOpenA() return pointer
-	HANDLE hInternetConnection; 			//! InternetConnectA() return pointer.
-	INT   (*init)(struct Cobol *c);			//! Initialiazes handles.
-	BOOL (*request)(struct Cobol *c, BOOL Method, PCHAR Data, DWORD Length);	//! connect()-esq runtime callback. Likely will change, just an idea to pull straght from runtime (Base function def implemented).
+	void *hInternetConfig;     			//! InternetOpenA() return pointer
+	void *hInternetConnection; 			//! InternetConnectA() return pointer.
+	int (*init)(struct Cobol *c);			//! Initialiazes handles.
+	int (*request)(struct Cobol *c, bool Method, char *Data, uint32_t *Length);
     } *HttpTransport;
     struct CobolCommand {
 	struct CobolCommand *next;			//! Next structure pointer.
-	PCHAR CommandName;				//! Command Name! Name of the command string.
-	void (*cb)(VOID);   				//! Cobol Packet! Probably gonna do a basic LTV (Length-Type-Value). (-NOT_IMPLEMENTED-).
+	char  *CommandName;				//! Command Name! Name of the command string.
+	char  *CommandDesc;				//! Description in help text.
+	void (*cb)(struct CobolPacket *pkt);   		//! Cobol Packet! Probably gonna do a basic LTV (Length-Type-Value). (-NOT_IMPLEMENTED-).
     } *Commands;
-    INT NumberCommands;
+    int NumberCommands;
 };
