@@ -12,7 +12,7 @@ struct CobolPacket * cobol_packet_new(uint32_t PacketType)
 #endif
     if (pkt != NULL) {
 	pkt->hdr.Type   = (uint32_t)PacketType;
-	pkt->hdr.Length = (uint32_t)8;
+	pkt->hdr.Length = (uint32_t)HEADER_LENGTH;
     }
     return pkt;
 }
