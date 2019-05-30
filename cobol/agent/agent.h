@@ -7,7 +7,7 @@ typedef struct _CobolConfiguration
 {
     CHAR UserAgent;		//! User-Agent
     CHAR Host;			//! Host in unsigned long format or uint32_t (was DWORD). Hrm.
-    CHAR Port;			//! Port in unsigned short or uint16_t (was USHORT);. Hrm
+    WORD Port;			//! Port in unsigned short or uint16_t (was USHORT);. Hrm
     CHAR Path;			//! Path to send POST/GET requests
 } Configuration;
 
@@ -17,7 +17,7 @@ struct Cobol
     struct _CobolHttp {
 	HANDLE hInternetConfig;     		//! InternetOpenA() return pointer
 	HANDLE hInternetConnection; 		//! InternetConnectA() return pointer.
-	INT   (*init)(struct Cobol *c);		//! Initialiazes handles (-NOT_IMPLEMENTED-);
+	INT   (*init)(struct Cobol *c);		//! Initialiazes handles.
 	PVOID (*request)(struct Cobol *c);	//! connect()-esq runtime callback. Likely will change, just an idea to pull straght from runtime (-NOT_IMPLEMENTED-).
     } *HttpTransport;
     struct _CobolCommand {
