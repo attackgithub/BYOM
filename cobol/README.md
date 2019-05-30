@@ -10,3 +10,10 @@ Cobol is intended to be a small project on constructing an implant entirely in C
  - [ ] License? Its not intended to be a sold/mainained product, more of something for fun to tinker with in C, but possibly one that gives credit where credit is due.
  - [ ] Stagers - Perhaps use a quick sha256 checksum to verify a payload with either Wininet/WinHTTP to download the payload.
 
+## Guidelines
+
+ - Bit of an odd one I admit, and possibly will introduce some problems, but include *only* Mingw-w64 support.
+
+## Credits
+
+Currently the packet structure I give credit to OJ Reeves, as I used his code/idea to create the LTV (Length-Type-Value) structures.
