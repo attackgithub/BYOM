@@ -17,7 +17,7 @@ struct Cobol
     struct _CobolHttp {
 	HANDLE hInternetConfig;     		//! InternetOpenA() return pointer
 	HANDLE hInternetConnection; 		//! InternetConnectA() return pointer.
-	ULONG (*init)(struct Cobol *c);		//! Initialiazes handles (-NOT_IMPLEMENTED-);
+	INT   (*init)(struct Cobol *c);		//! Initialiazes handles (-NOT_IMPLEMENTED-);
 	PVOID (*request)(struct Cobol *c);	//! connect()-esq runtime callback. Likely will change, just an idea to pull straght from runtime (-NOT_IMPLEMENTED-).
     } *HttpTransport;
     struct _CobolCommand {
@@ -25,4 +25,5 @@ struct Cobol
 	PCHAR CommandName;			//! Command Name! Name of the command string.
 	void (*cb)(VOID);   			//! Cobol Packet! Probably gonna do a basic LTV (Length-Type-Value). (-NOT_IMPLEMENTED-).
     } *Commands;
+    INT NumberCommands;
 };
