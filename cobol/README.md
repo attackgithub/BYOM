@@ -8,3 +8,5 @@ Cobol is intended to be a small project on constructing an implant entirely in C
  - [ ] Support HTTP(s) using either [WinInet](https://docs.microsoft.com/en-us/windows/desktop/wininet/about-wininet) or [WinHTTP](https://docs.microsoft.com/en-us/windows/desktop/winhttp/about-winhttp). Both have their benefits, as well as their dowsides. 
  - [ ] Implant should have basic filesystem support (ls, pwd, upload, download, rm, rmdir)
  - [ ] License? Its not intended to be a sold/mainained product, more of something for fun to tinker with in C, but possibly one that gives credit where credit is due.
+ - [ ] Stagers - Perhaps use a quick sha256 checksum to verify a payload with either Wininet/WinHTTP to download the payload.
+
