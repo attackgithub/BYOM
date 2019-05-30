@@ -29,18 +29,30 @@ INT wininet_init(struct Cobol *c)
 // etc.
 // Currently opens an request to the path defined in Configuration.
 // using wininet's HttpOpenRequestA()
-PVOID wininet_request(struct Cobol *c, BOOL Method)
+BOOL wininet_request(struct Cobol *c, BOOL Method, PCHAR *Data, PDWORD Length)
 {
+    BOOL ReturnValue = FALSE;
+    // Maybe allow data being sent from GET and recieved from POST (rather then GET = recv & POST = send) ?.
+    // Not sure at the moment. Keep as is for now.
     HANDLE hNetworkRequest = HttpOpenRequestA(c->HttpTransport->hInternetConnection, Method ? "GET" : "POST",
 	(PCHAR)&c->Config->Path, NULL, NULL, NULL,
 	INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_NO_UI |INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS, 0);
-    if(hNetworkRequest == NULL)
+    if(hNetworkRequest != NULL)
     {
-	InternetCloseHandle(c->HttpTransport->hInternetConfig);
-	InternetCloseHAndle(c->HttpTransport->hInternetConnection);
-	return NULL;
+	if ( Method ) {
+		ReturnValue = HttpSendRequestA(hNetworkRequest, NULL, 0, NULL, 0);
+		if ( ReturnValue != FALSE ) {
+			DWORD BytesRead = 0;
+			InternetQueryDataAvailable(hNetworkRequest, Length, 0, 0);
+			*Data = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, *Length);
+			InternetReadFile(hNetworkRequest, *Data, *Length, &BytesRead);
+		}
+	}
+	else {
+		ReturnValue = HttpSendRequestA(hNetworkRequest, NULL, 0, *Data, *Length);
+	};
     }
-    return hNetworkRequest;
+    return ReturnValue;
 }
 
 VOID WininetConfigureCallback(struct Cobol *c)

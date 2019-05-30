@@ -18,7 +18,7 @@ struct Cobol
 	HANDLE hInternetConfig;     			//! InternetOpenA() return pointer
 	HANDLE hInternetConnection; 			//! InternetConnectA() return pointer.
 	INT   (*init)(struct Cobol *c);			//! Initialiazes handles.
-	PVOID (*request)(struct Cobol *c, BOOL Method);	//! connect()-esq runtime callback. Likely will change, just an idea to pull straght from runtime (Base function def implemented).
+	BOOL (*request)(struct Cobol *c, BOOL Method, PCHAR Data, DWORD Length);	//! connect()-esq runtime callback. Likely will change, just an idea to pull straght from runtime (Base function def implemented).
     } *HttpTransport;
     struct CobolCommand {
 	struct CobolCommand *next;			//! Next structure pointer.
