@@ -5,7 +5,7 @@
 
 //#include "packet.h"
 #include <stdbool.h>
-
+#include <stdint.h>
 // Probably gonna end up doing executable patching. Maybe XOR'ing it as well,
 // but we'll discuss that when we get there.
 struct Configuration
