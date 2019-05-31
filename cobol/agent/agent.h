@@ -3,7 +3,7 @@
 #include <windows.h>
 #endif
 
-#include "packet.h"
+//#include "packet.h"
 #include <stdbool.h>
 
 // Probably gonna end up doing executable patching. Maybe XOR'ing it as well,
@@ -29,7 +29,7 @@ struct Cobol
 	struct CobolCommand *next;			//! Next structure pointer.
 	char  *CommandName;				//! Command Name! Name of the command string.
 	char  *CommandDesc;				//! Description in help text.
-	void (*cb)(struct CobolPacket *pkt);   		//! Cobol Packet! Probably gonna do a basic LTV (Length-Type-Value). (-NOT_IMPLEMENTED-).
+	void (*cb)(void *pkt);   		//! Cobol Packet! Probably gonna do a basic LTV (Length-Type-Value). (-NOT_IMPLEMENTED-).
     } *Commands;
     int NumberCommands;
 };
