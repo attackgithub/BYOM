@@ -16,4 +16,4 @@ Cobol is intended to be a small project on constructing an implant entirely in C
 
 ## Credits
 
-Currently the packet structure I give credit to OJ Reeves, as I used his code/idea to create the LTV (Length-Type-Value) structures.
+[json-c] project for their JSON C implementation.
