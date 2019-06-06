@@ -24,8 +24,8 @@
 */
 #include "ps.h"
 
-unsigned long get_procid(char* pname) {
-   unsigned long  pd;
+DWORD get_procid(char* pname) {
+   DWORD          pd;
    HANDLE         hs;
    PROCESSENTRY32 p32;
 
@@ -35,7 +35,7 @@ unsigned long get_procid(char* pname) {
 
      while (Process32Next(hs, &p32)!=FALSE) {
        if (strcmp((char*)&p32.szExeFile, pname)==0) {
-         *(DWORD *)&pd = p32.th32ProcessID;
+         pd = p32.th32ProcessID;
          break;
        }
      }
@@ -45,7 +45,7 @@ unsigned long get_procid(char* pname) {
 };
 
 void * get_phandle_proc(char* pname) {
-   unsigned long pd = get_procid(pname);
+   DWORD pd = get_procid(pname);
 #if !defined(NOSPOOF)
    return OpenProcess(PROCESS_CREATE_PROCESS | PROCESS_QUERY_INFORMATION,
      TRUE, pd);
