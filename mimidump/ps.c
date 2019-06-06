@@ -24,10 +24,43 @@
 */
 #include "ps.h"
 
+unsigned long get_procid(char* pname) {
+   unsigned long  pd;
+   HANDLE         hs;
+   PROCESSENTRY32 p32;
+
+   hs = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+   if (hs) {
+     Process32First(hs, &p32);
+
+     while (Process32Next(hs, &p32)!=FALSE) {
+       if (strcmp((char*)&p32.szExeFile, pname)==0) {
+         *(DWORD *)&pd = p32.th32ProcessID;
+         break;
+       }
+     }
+     CloseHandle(hs);
+   }
+   return pd;
+};
+
+void * get_phandle_proc(char* pname) {
+   unsigned long pd = get_procid(pname);
 #if !defined(NOSPOOF)
-void * get_proc_handle(void* phandle, char* pname) {
+   return OpenProcess(PROCESS_CREATE_PROCESS | PROCESS_QUERY_INFORMATION,
+     TRUE, pd);
+#else
+   return OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_DUP_HANDLE,
+     TRUE, pd);
+#endif
+};
+
+void * get_phandle_from_proc(void* phandle, char* pname) {
+   HANDLE              hp;
    SIZE_T              ln;
    BOOL                rt;
+// Probably should refactor this into a seperate function.
+#if !defined(NOSPOOF)
    STARTUPINFOEXA      si;
    PROCESS_INFORMATION pi;
 
@@ -52,5 +85,15 @@ void * get_proc_handle(void* phandle, char* pname) {
     DeleteProcThreadAttributeList(si.lpAttributeList);
     HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
    }
-}
+
+   rt = CreateProcessA(NULL, pname, NULL, NULL, TRUE, EXTENDED_STARTUPINFO_PRESENT | CREATE_SUSPENDED,
+     NULL, NULL, (LPSTARTUPINFOA)&si, &pi);
+   if (rt<=0) {
+    DeleteProcThreadAttributeList(si.lpAttributeList);
+    HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
+   }
+   hp = pi.hProcess;
+#else
+   hp = phandle;	// sometimes, its that bloody stupid.
 #endif
+};

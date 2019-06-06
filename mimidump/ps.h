@@ -27,6 +27,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <tlhelp32.h>
 
 #if !defined(_MSC_VER)
 #define PROC_THREAD_ATTRIBUTE_PARENT_PROCESS 0x00020000
@@ -58,8 +59,11 @@ extern BOOL DeleteProcThreadAttributeList(
 );
 #endif
 
-/* get_proc_handle() retrieves a open process handle
-   from a process either through process spoofing
-   & handle inheristance or through duplication. */
-void * get_proc_handle(void* phandle, char* pname);
+/* get_phandle_proc() acquires a handle to a process */
+void * get_phandle_proc(char* pname);
+
+/* get_phandle_from_proc() retrieves a open process handle
+   through inheritance and parent process spoofing,
+   or through handle duplication  */
+void * get_phandle_from_proc(void* phandle, char* pname);
 #endif
