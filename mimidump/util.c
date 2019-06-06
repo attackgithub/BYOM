@@ -24,7 +24,22 @@
 */
 #include "util.h"
 
-int toggle_privilege(void* token, char* prvname, int prvopt) {
+void * open_thread_token(void) {
+   HANDLE ht;
+   BOOL   rt;
+
+   rt = OpenThreadToken(GetCurrentThread(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+     FALSE, &ht);
+   if (rt!=TRUE) {
+     rt = OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+       &ht);
+     if (rt!=TRUE)
+       return NULL;
+   }
+   return ht;
+}
+
+int toggle_privilege(void* token, char* prvname, bool prvopt) {
    BOOL             rt;
    LUID             ld;
    TOKEN_PRIVILEGES tp;
@@ -37,7 +52,7 @@ int toggle_privilege(void* token, char* prvname, int prvopt) {
    RtlSecureZeroMemory(&tp, sizeof(TOKEN_PRIVILEGES));
    tp.PrivilegeCount           = 1;
    tp.Privileges[0].Luid       = ld;
-   tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+   tp.Privileges[0].Attributes = prvopt ? SE_PRIVILEGE_ENABLED : 0;
 
    rt = AdjustTokenPrivileges(token, FALSE, &tp, sizeof(TOKEN_PRIVILEGES),
      (PTOKEN_PRIVILEGES)NULL, NULL);

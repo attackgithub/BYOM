@@ -29,9 +29,17 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <stdbool.h>
+
+extern HANDLE GetCurrentThreadToken();
+
+/* open_thread_token - opens the current thread token
+   if it exists, else uses the current process token */
+void * open_thread_token(void);
+
 /* toggle_privilege() - enable/disable a privilege
    within a impersonation, delegation or process
    token */
-int toggle_privilege(void* ptoken, char* prvname, int prvopt);
+int toggle_privilege(void* ptoken, char* prvname, bool prvopt);
 
 #endif

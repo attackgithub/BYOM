@@ -55,12 +55,10 @@ void * get_phandle_proc(char* pname) {
 #endif
 };
 
-void * get_phandle_from_proc(void* phandle, char* pname) {
+void * get_phandle_child_proc(void* phandle, char* pname) {
    HANDLE              hp;
    SIZE_T              ln;
    BOOL                rt;
-// Probably should refactor this into a seperate function.
-#if !defined(NOSPOOF)
    STARTUPINFOEXA      si;
    PROCESS_INFORMATION pi;
 
@@ -82,18 +80,18 @@ void * get_phandle_from_proc(void* phandle, char* pname) {
    rt = UpdateProcThreadAttribute(si.lpAttributeList, 0, PROC_THREAD_ATTRIBUTE_PARENT_PROCESS,
      &phandle, sizeof(HANDLE), NULL, NULL);
    if (rt<=0) {
-    DeleteProcThreadAttributeList(si.lpAttributeList);
-    HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
+    goto end;
    }
 
    rt = CreateProcessA(NULL, pname, NULL, NULL, TRUE, EXTENDED_STARTUPINFO_PRESENT | CREATE_SUSPENDED,
      NULL, NULL, (LPSTARTUPINFOA)&si, &pi);
    if (rt<=0) {
-    DeleteProcThreadAttributeList(si.lpAttributeList);
-    HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
+    goto end;
    }
    hp = pi.hProcess;
-#else
-   hp = phandle;	// sometimes, its that bloody stupid.
-#endif
+
+end:
+   DeleteProcThreadAttributeList(si.lpAttributeList);
+   HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
+   return hp;
 };

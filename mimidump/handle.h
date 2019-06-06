@@ -22,48 +22,23 @@
   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef PS_H
-#define PS_H
+
+#ifndef HANDLE_H
+#define HANDLE_H
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <tlhelp32.h>
+#include <ntstatus.h>
 
-#if !defined(_MSC_VER)
-#define PROC_THREAD_ATTRIBUTE_PARENT_PROCESS 0x00020000
-
-typedef struct _STARTUPINFOEXA {
-   STARTUPINFOA si;
-   PPROC_THREAD_ATTRIBUTE_LIST lpAttributeList;
-} STARTUPINFOEXA, *LPSTARTUPINFOEXA;
-
-extern BOOL InitializeProcThreadAttributeList(
-   LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList,
-   DWORD dwAttributeCount,
-   DWORD dwFlags,
-   PSIZE_T lpSize
-);
-
-extern BOOL UpdateProcThreadAttribute(
-   LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList,
-   DWORD dwFlags,
-   DWORD_PTR Attribute,
-   PVOID lpValue,
-   SIZE_T cbSize,
-   PVOID lpPreviousValue,
-   PSIZE_T lpReturnSize
-);
-
-extern BOOL DeleteProcThreadAttributeList(
-   LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList
-);
+#if defined(_MSC_VER)
+#pragma comment(lib, "ntdll.lib")
 #endif
 
-/* get_phandle_proc() acquires a handle to a process */
-void * get_phandle_proc(char* pname);
+extern NTSTATUS NtQuerySystemInformation(
+   SYSTEM_INFORMATION_CLASS SystemInformationClass,
+   PVOID SystemInformation,
+   ULONG SystemInformationLength,
+   PULONG ReturnLength
+);
 
-/* get_phandle_child_proc() retrieves a process handle
-   to a child process of the specified parent (retrievable)
-   with get_phandle_proc(), through process spoofing. */
-void * get_phandle_child_proc(void* phandle, char* pname);
 #endif
